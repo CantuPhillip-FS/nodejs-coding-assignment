@@ -62,14 +62,32 @@ router.get("/:id", (req, res) => {
 /*                                    POST                                    */
 /* -------------------------------------------------------------------------- */
 router.post("/", (req, res) => {
-  const id = count++;
-  books.push({ id, ...req.body });
-  console.log("My Books: ", books);
-  res.status(200).json({
-    message: `From the Book API route with ${req.method}`,
-    book: books[books.length - 1],
-    success: true,
-  });
+  try {
+    if (req.body.title == undefined || req.body.title == "") {
+      res.status(400).json({
+        message: `A title is required (e.g., 'title': 'Think & Grow Rich')`,
+        success: false,
+      });
+    } else if (req.body.author == undefined || req.body.author == "") {
+      res.status(400).json({
+        message: `An author is required (e.g., 'author': 'Napoleon Hill')`,
+        success: false,
+      });
+    } else {
+      const id = count++;
+      books.push({ id, ...req.body });
+      res.status(200).json({
+        message: `From the Book API route with ${req.method}`,
+        book: books[books.length - 1],
+        success: true,
+      });
+    }
+  } catch (error) {
+    res.status(400).json({
+      message: `Something went wrong. Did you include a body in your request?`,
+      success: false,
+    });
+  }
 });
 
 /* -------------------------------------------------------------------------- */
